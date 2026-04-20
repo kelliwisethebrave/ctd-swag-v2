@@ -1,5 +1,17 @@
 import ctdLogo from "./assets/mono-blue-logo.svg";
-function Header() {
+import shoppingCart from "./assets/icons/shoppingCart.svg";
+import { useEffect } from "react";
+
+function Header({ cart }) {
+  useEffect(() => {
+    cart.forEach((item) => {
+      console.log(item.baseName, item.cartItemId);
+    });
+    if (cart.length > 0) {
+      console.log("--end of cart---");
+    }
+  });
+
   return (
     <div className="coming-soon">
       <h1>CTD Swag</h1>
@@ -7,6 +19,11 @@ function Header() {
         <img src={ctdLogo} alt="Code The Dream Logo" />
       </div>
       <h2>Coming Soon...</h2>
+      <div className="shoppingCart">
+        <button aria-label="Shopping cart">
+          <img src={shoppingCart} alt="shopping cart" />
+        </button>
+      </div>
     </div>
   );
 }
