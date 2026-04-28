@@ -1,13 +1,16 @@
 import "./App.css";
 import inventoryData from "./assets/inventory.json";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Header from "./Header.jsx";
 import ProductList from "./ProductList.jsx";
 import ProductCard from "./ProductCard.jsx";
+import Cart from "./Cart.jsx";
 
 function App() {
   const [inventory, setInventory] = useState([]);
   const [cart, setCart] = useState([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const year = useRef(new Date().getFullYear());
 
   useEffect(() => {
     setInventory([...inventoryData.inventory]);
@@ -19,22 +22,30 @@ function App() {
   }
 
   function handleAddItemToCart(id) {
-    const target = inventory.find((item) => item.id === id);
+    const inventoryItem = inventory.find((item) => item.id === id);
     // if no inventory items are found,
     // we want to prevent the app from crashing
     // by exiting this function now
 
-    if (!target) {
+    if (!inventoryItem) {
       console.error("cart error: item not found");
       return;
     }
-    // create a new object, spread the contents of the item selected
-    // and add a `cartItemId`
 
-    const cartItem = { ...target, cartItemId: Date.now() };
-    console.log(cartItem);
-    setCart([...cart, cartItem]);
+    const itemToUpdate = cart.find((item) => item.id === id);
+    let updatedCartItem;
+    if (itemToUpdate) {
+      updatedCartItem = {
+        ...itemToUpdate,
+        itemCount: itemToUpdate.itemCount + 1,
+      };
+    } else {
+      updatedCartItem = { ...inventoryItem, itemCount: 1 };
+    }
+    setCart([...cart.filter((item) => item.id !== id), updatedCartItem]);
   }
+  // create a new object, spread the contents of the item selected
+  // and add a `cartItemId`
 
   function removeItemFromCart(id) {
     const updatedCart = cart.filter((item) => item.id !== id);
@@ -54,17 +65,47 @@ function App() {
   }*/
   }
 
+  function handleCloseCart() {
+    //prevents re-render if unchanged
+    if (isCartOpen) {
+      setIsCartOpen(false);
+    }
+  }
+
+  function handleOpenCart() {
+    //prevents re-render if unchanged
+    if (!isCartOpen) {
+      setIsCartOpen(true);
+    }
+  }
+
   return (
-    <main>
-      <Header cart={cart} />
-      <ProductList
-        handleAddItemToCart={handleAddItemToCart}
-        inventory={inventory}
-      >
-        {/*{promoteItem()}*/}
-      </ProductList>
-      {/*invoking promoted item between the tags inserts the ItemCard*/}
-    </main>
+    <>
+      <main>
+        <Header cart={cart} handleOpenCart={handleOpenCart} />
+        <ProductList
+          handleAddItemToCart={handleAddItemToCart}
+          inventory={inventory}
+        >
+          {/*{promoteItem()}*/}
+          {/*invoking promoted item between the tags inserts the ItemCard*/}
+        </ProductList>
+        {/* isCartOpen has to be true for the cart to be rendered*/}
+        {isCartOpen && (
+          <Cart
+            cart={cart}
+            setCart={setCart}
+            handleCloseCart={handleCloseCart}
+          />
+        )}
+      </main>
+      <footer>
+        <p>
+          Made with ❤️ | &copy; {year.current}{" "}
+          <a href="https://codethedream.org/">CTD </a>
+        </p>
+      </footer>
+    </>
   );
 }
 
