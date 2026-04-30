@@ -1,5 +1,5 @@
-import ctdLogo from "./assets/mono-blue-logo.svg";
-import shoppingCart from "./assets/icons/shoppingCart.svg";
+import ctdLogo from "../assets/mono-blue-logo.svg";
+import shoppingCart from "../assets/icons/shoppingCart.svg";
 import { useEffect } from "react";
 
 function Header({ cart, handleOpenCart }) {

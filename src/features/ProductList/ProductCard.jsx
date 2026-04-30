@@ -1,6 +1,6 @@
 import ProductCardVariants from "./ProductCardVariants.jsx";
 import { useState } from "react";
-import placeholder from "./assets/placeholder.png";
+import placeholder from "../../assets/placeholder.png";
 
 function ProductCard({ product, handleAddItemToCart }) {
   const [areVariantsShown, setAreVariantsShown] = useState(false);

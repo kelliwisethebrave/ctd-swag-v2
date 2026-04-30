@@ -1,16 +1,16 @@
 import "./App.css";
 import inventoryData from "./assets/inventory.json";
 import { useState, useEffect, useRef } from "react";
-import Header from "./Header.jsx";
-import ProductList from "./ProductList.jsx";
-import ProductCard from "./ProductCard.jsx";
-import Cart from "./Cart.jsx";
+import Header from "./layout/Header.jsx";
+import ProductList from "./features/ProductList/ProductList.jsx";
+import ProductCard from "./features/ProductList/ProductCard.jsx";
+import Cart from "./features/Cart/Cart.jsx";
+import Footer from "./layout/Footer.jsx";
 
 function App() {
   const [inventory, setInventory] = useState([]);
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const year = useRef(new Date().getFullYear());
 
   useEffect(() => {
     setInventory([...inventoryData.inventory]);
@@ -99,12 +99,7 @@ function App() {
           />
         )}
       </main>
-      <footer>
-        <p>
-          Made with ❤️ | &copy; {year.current}{" "}
-          <a href="https://codethedream.org/">CTD </a>
-        </p>
-      </footer>
+      <Footer />
     </>
   );
 }
