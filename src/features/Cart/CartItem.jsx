@@ -12,12 +12,15 @@ function CartItem({ item, handleUpdateField }) {
             Count:{" "}
             <input
               type="number"
-              value={item.itemCount}
-              onChange={(event) => handleUpdateField({ event, id: item.id })}
+              min="0"
+              value={item.quantity}
+              onChange={(event) =>
+                handleUpdateField({ event, id: item.productId })
+              }
             />
           </p>
         </label>
-        <p>Subtotal: ${(item.price * item.itemCount).toFixed(2)}</p>
+        <p>Subtotal: ${(item.price * item.quantity).toFixed(2)}</p>
       </div>
     </li>
   );

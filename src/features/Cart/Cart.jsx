@@ -1,17 +1,32 @@
 import placeholder from "../../assets/placeholder.png";
 import { useState } from "react";
 import CartItem from "./CartItem.jsx";
+import { useEffect } from "react";
 
-function Cart({ cart, handleCloseCart, setCart }) {
+function Cart({
+  cart,
+  handleCloseCart,
+  setCart,
+  isCartSyncing,
+  handleSyncCart,
+}) {
   const [workingCart, setWorkingCart] = useState(cart);
   const [isFormDirty, setIsFormDirty] = useState(false);
+
+  useEffect(() => {
+    if (isFormDirty || isCartSyncing) {
+      //prevents setWorkingCart from running
+      return;
+    }
+    setWorkingCart(cart);
+  }, [cart, isFormDirty, isCartSyncing]);
 
   function getWorkingCartPrice() {
     // using `.toFixed` because floating point arithmetic
     //introduces surprising rounding issues
     //e.g. `console.log(.99 + .99 + .99)` will print 2.96999999998
-    return cart
-      .reduce((acc, item) => acc + item.price * item.itemCount, 0)
+    return workingCart
+      .reduce((acc, item) => acc + item.price * item.quantity, 0)
       .toFixed(2);
   }
 
@@ -22,8 +37,8 @@ function Cart({ cart, handleCloseCart, setCart }) {
       setIsFormDirty(true);
     }
 
-    const targetProduct = workingCart.find((item) => item.id === id);
-    const targetIndex = workingCart.findIndex((item) => item.id === id);
+    const targetProduct = workingCart.find((item) => item.productId === id);
+    const targetIndex = workingCart.findIndex((item) => item.productId === id);
     if (!targetProduct) {
       console.error("cart error: item not found");
       return;
@@ -33,7 +48,7 @@ function Cart({ cart, handleCloseCart, setCart }) {
 
     const updatedProduct = {
       ...targetProduct,
-      itemCount: parseInt(event.target.value, 10),
+      quantity: parseInt(event.target.value, 10),
     };
 
     //avoid re-ordering array when updating cart item
@@ -51,16 +66,17 @@ function Cart({ cart, handleCloseCart, setCart }) {
   }
 
   function removeEmptyItems(workingCart) {
-    return workingCart.filter((item) => item.itemCount > 0);
+    return workingCart.filter((item) => item.quantity > 0);
   }
 
   function handleConfirm(event) {
     event.preventDefault();
     //call setCart with workingCartValue
-    setCart([...workingCart]);
+    //setCart([...workingCart]);
     const cleanedCart = removeEmptyItems(workingCart);
-    setCart(cleanedCart);
-    setWorkingCart(cleanedCart);
+    //setCart(cleanedCart);
+    //setWorkingCart(cleanedCart);
+    handleSyncCart([...cleanedCart]);
     setIsFormDirty(false);
   }
 
@@ -81,7 +97,7 @@ function Cart({ cart, handleCloseCart, setCart }) {
                   <CartItem
                     key={item.id}
                     item={item}
-                    onHandleItemUpdate={handleUpdateField}
+                    handleUpdateField={handleUpdateField}
                   />
                 );
               })}

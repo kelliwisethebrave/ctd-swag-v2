@@ -2,9 +2,15 @@ import ctdLogo from "../assets/mono-blue-logo.svg";
 import shoppingCart from "../assets/icons/shoppingCart.svg";
 import { useEffect } from "react";
 
-function Header({ cart, handleOpenCart }) {
+function Header({
+  cart,
+  handleOpenCart,
+  handleOpenAuthForm,
+  user,
+  handleLogOut,
+}) {
   function getItemCount() {
-    return cart.reduce((acc, item) => acc + item.itemCount, 0);
+    return cart.reduce((acc, item) => acc + item.quantity, 0);
   }
   {
     /*useEffect(() => {
@@ -18,12 +24,39 @@ function Header({ cart, handleOpenCart }) {
   }
 
   return (
-    <div className="coming-soon">
+    <div className="siteBranding">
       <h1>CTD Swag</h1>
       <div style={{ height: 100, width: 100 }}>
         <img src={ctdLogo} alt="Code The Dream Logo" />
       </div>
-      <h2>Coming Soon...</h2>
+      <div className="userActions">
+        {user.id ? (
+          <>
+            <span>Hi, {user.firstName}</span>
+            <button className="authButton signOut" onClick={handleLogOut}>
+              Sign out
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              className="authButton"
+              type="button"
+              onClick={() => handleOpenAuthForm("login")}
+            >
+              Log in
+            </button>{" "}
+            or{" "}
+            <button
+              className="authButton"
+              type="button"
+              onClick={() => handleOpenAuthForm("register")}
+            >
+              Register
+            </button>
+          </>
+        )}
+      </div>
       <div className="shoppingCart">
         <button
           aria-label="Shopping cart"
