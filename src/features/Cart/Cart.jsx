@@ -3,13 +3,7 @@ import { useState } from "react";
 import CartItem from "./CartItem.jsx";
 import { useEffect } from "react";
 
-function Cart({
-  cart,
-  handleCloseCart,
-  setCart,
-  isCartSyncing,
-  handleSyncCart,
-}) {
+function Cart({ cart, handleCloseCart, isCartSyncing, handleSyncCart }) {
   const [workingCart, setWorkingCart] = useState(cart);
   const [isFormDirty, setIsFormDirty] = useState(false);
 
