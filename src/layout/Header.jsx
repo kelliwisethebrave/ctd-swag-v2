@@ -1,6 +1,7 @@
 import ctdLogo from "../assets/mono-blue-logo.svg";
 import shoppingCart from "../assets/icons/shoppingCart.svg";
 import { useEffect } from "react";
+import { Link } from "react-router";
 
 function Header({
   cart,
@@ -32,7 +33,9 @@ function Header({
       <div className="userActions">
         {user.id ? (
           <>
-            <span>Hi, {user.firstName}</span>
+            <Link to="/account" className="linkButton">
+              <span>Hi, {user.firstName}</span>
+            </Link>
             <button className="authButton signOut" onClick={handleLogOut}>
               Sign out
             </button>

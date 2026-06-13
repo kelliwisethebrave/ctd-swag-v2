@@ -2,10 +2,13 @@ import placeholder from "../../assets/placeholder.png";
 import { useState } from "react";
 import CartItem from "./CartItem.jsx";
 import { useEffect } from "react";
+import { useNavigate } from "react-router";
 
 function Cart({ cart, handleCloseCart, isCartSyncing, handleSyncCart }) {
   const [workingCart, setWorkingCart] = useState(cart);
   const [isFormDirty, setIsFormDirty] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isFormDirty || isCartSyncing) {
@@ -74,6 +77,12 @@ function Cart({ cart, handleCloseCart, isCartSyncing, handleSyncCart }) {
     setIsFormDirty(false);
   }
 
+  function handleCheckout(e) {
+    e.preventDefault();
+    handleCloseCart();
+    navigate("/checkout");
+  }
+
   return (
     <>
       <div className="cartScreen"></div>
@@ -108,6 +117,9 @@ function Cart({ cart, handleCloseCart, isCartSyncing, handleSyncCart }) {
         )}
         <button onClick={handleCloseCart} type="button">
           CloseCart
+        </button>
+        <button disabled={isFormDirty} onClick={handleCheckout}>
+          Checkout
         </button>
       </div>
     </>

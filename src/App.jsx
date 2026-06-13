@@ -1,6 +1,7 @@
 import "./App.css";
 //import inventoryData from "./assets/inventory.json";
 import { useState, useEffect, useRef, useCallback } from "react";
+import { Routes, Route, Navigate } from "react-router";
 import Header from "./layout/Header.jsx";
 import ProductList from "./features/ProductList/ProductList.jsx";
 import ProductCard from "./features/ProductList/ProductCard.jsx";
@@ -8,6 +9,10 @@ import Cart from "./features/Cart/Cart.jsx";
 import Dialog from "./shared/Dialog.jsx";
 import Footer from "./layout/Footer.jsx";
 import AuthForm from "./features/Auth/AuthForm.jsx";
+import Account from "./pages/Account/Account.jsx";
+import Checkout from "./pages/Checkout/Checkout.jsx";
+import NotFound from "./pages/404/404.jsx";
+import ProductDetails from "./pages/Product/ProductDetails.jsx";
 import { useReducer } from "react";
 import {
   //aliasing with `as` keeps the reducer and state easily identifiable
@@ -286,50 +291,70 @@ function App() {
 
   return (
     <>
-      <main>
-        {isDialogOpen && (
-          <Dialog
-            message={cartItemError}
-            handleCloseDialog={handleCloseDialog}
-          />
-        )}
-        <Header
-          cart={cartState.cart}
-          handleOpenCart={() => dispatch({ type: "open" })}
-          //handleOpenAuthForm={() => setIsAuthFormOpen(true)}
-          handleOpenAuthForm={handleOpenAuthForm}
-          //new props
-          handleLogOut={handleLogOut} //wipes out the user and cart values
-          user={user} //used to tell if user logged in
+      {isDialogOpen && (
+        <Dialog message={cartItemError} handleCloseDialog={handleCloseDialog} />
+      )}
+
+      <Header
+        cart={cartState.cart}
+        handleOpenCart={() => dispatch({ type: "open" })}
+        //handleOpenAuthForm={() => setIsAuthFormOpen(true)}
+        handleOpenAuthForm={handleOpenAuthForm}
+        //new props
+        handleLogOut={handleLogOut} //wipes out the user and cart values
+        user={user} //used to tell if user logged in
+      />
+      {isAuthFormOpen && (
+        <AuthForm
+          handleCloseAuthForm={handleCloseAuthForm}
+          handleAuthenticate={handleAuthenticate}
+          isAuthenticating={isAuthenticating}
+          authError={authError}
+          isRegistering={isRegistering}
+          handleRegister={handleRegister}
         />
-        {isAuthFormOpen && (
-          <AuthForm
-            handleCloseAuthForm={handleCloseAuthForm}
-            handleAuthenticate={handleAuthenticate}
-            isAuthenticating={isAuthenticating}
-            authError={authError}
-            isRegistering={isRegistering}
-            handleRegister={handleRegister}
+      )}
+      <main>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <ProductList
+                handleAddItemToCart={handleAddItemToCart}
+                inventory={inventory}
+              />
+            }
           />
-        )}
-        <ProductList
-          handleAddItemToCart={handleAddItemToCart}
-          inventory={inventory}
-        >
+          {user.id && (
+            <Route
+              path="/account"
+              element={<Account user={user} handleLogOut={handleLogOut} />}
+            />
+          )}
+          <Route
+            path="/checkout"
+            element={<Checkout cart={cartState.cart} />}
+          />
+          <Route path="*" element={<NotFound />} />
+          <Route path="/products/:id" element={<ProductDetails />} />
+
           {/*{promoteItem()}*/}
-          {/*invoking promoted item between the tags inserts the ItemCard*/}
-        </ProductList>
-        {/* isCartOpen has to be true for the cart to be rendered*/}
-        {cartState.isCartOpen && (
-          <Cart
-            cart={cartState.cart}
-            handleCloseCart={handleCloseCart}
-            isCartSyncing={cartState.isCartSyncing}
-            handleSyncCart={handleSyncCart}
-            cartError={cartState.error}
-          />
-        )}
+          {/*invoking promoted item between the tags inserts the ItemCard
+            </ProductList>*/}
+
+          {/* isCartOpen has to be true for the cart to be rendered*/}
+        </Routes>
       </main>
+      {cartState.isCartOpen && (
+        <Cart
+          cart={cartState.cart}
+          handleCloseCart={handleCloseCart}
+          isCartSyncing={cartState.isCartSyncing}
+          handleSyncCart={handleSyncCart}
+          cartError={cartState.error}
+        />
+      )}
+
       <Footer />
     </>
   );
